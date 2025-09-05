@@ -17,7 +17,8 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # Load all projects from MongoDB 'datagenie.projects'
 @app.route('/api/load_configs', methods=['GET'])
 def load_configs():
-    client = MongoClient('mongodb://localhost/datagenie')
+    mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost/datagenie')
+    client = MongoClient(mongo_uri)
     db = client['datagenie']
     coll = db['projects']
     configs = list(coll.find({}, {'_id': 0, 'name': 1, 'config': 1}))
@@ -81,7 +82,8 @@ def save_config():
         data = request.json
         if not data or 'name' not in data or 'config' not in data:
             return jsonify({'error': 'Missing name or config'}), 400
-        client = MongoClient('mongodb://localhost/datagenie')
+        mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost/datagenie')
+        client = MongoClient(mongo_uri)
         db = client['datagenie']
         coll = db['projects']
         coll.update_one({'name': data['name']}, {'$set': {'config': data['config']}}, upsert=True)
