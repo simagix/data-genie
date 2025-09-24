@@ -1,3 +1,8 @@
+// Redact credentials in a Mongo URI
+function redactMongoUri(uri) {
+  // Replace user:pass@ with ***:***@
+  return uri.replace(/([\w%]+):([^@]+)@/, '***:***@');
+}
 
 import React, { useEffect, useState } from 'react';
 function App() {
@@ -571,7 +576,7 @@ function App() {
               <label style={{ fontWeight: 'bold', display: 'block', marginBottom: 6 }}>MongoDB Connection String</label>
               <input
                 type="text"
-                value={editMongoUri}
+                value={redactMongoUri(editMongoUri)}
                 onChange={e => setEditMongoUri(e.target.value)}
                 style={{ width: '100%', padding: 10, fontSize: 15 }}
               />
